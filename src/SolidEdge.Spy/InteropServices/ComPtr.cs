@@ -627,9 +627,12 @@ namespace SolidEdge.Spy.InteropServices
                     }
 
 #if DEBUG
-                    ComPtrProperty refCountProperty = new ComPtrProperty("[RefCount]", "", this.RefCount, typeof(int), VarEnum.VT_I4, true);
+                    var refCountProperty = new ComPtrProperty("[RefCount]", "", this.RefCount, typeof(int), VarEnum.VT_I4, true);
                     list.Add(new ComPtrPropertyDescriptor(ref refCountProperty, null, attributes));
 #endif
+                    var pointerProperty = new ComPtrProperty("[Pointer]", "", this.handle, typeof(string), VarEnum.VT_INT, true);
+                    list.Add(new ComPtrPropertyDescriptor(ref pointerProperty, null, attributes));
+
                     _propertyDescriptorCollection = new PropertyDescriptorCollection(list.ToArray());
                 }
             }
@@ -711,6 +714,14 @@ namespace SolidEdge.Spy.InteropServices
                 }
             }
 #endif
+
+            if (_comPropertyInfo == null)
+            {
+                if (_comPtrProperty.Name.Equals("[Pointer]"))
+                {
+                    return ((ComPtr)component).DangerousGetHandle();
+                }
+            }
 
             try
             {

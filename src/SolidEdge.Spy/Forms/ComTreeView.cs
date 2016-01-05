@@ -163,6 +163,7 @@ namespace SolidEdge.Spy.Forms
             FontStyle captionFontStyle = FontStyle.Regular;
             Color captionColor = ForeColor;
             Color caption2Color = Color.Green;
+            //Color pointerColor = Color.DodgerBlue;
             TextFormatFlags textFormatFlags = TextFormatFlags.Left | TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter;
 
             Rectangle rectNode = node.Bounds;
@@ -243,6 +244,15 @@ namespace SolidEdge.Spy.Forms
                 rectCaption.Width = TextRenderer.MeasureText(node.TypeFullName, baseFont).Width;
                 TextRenderer.DrawText(e.Graphics, node.TypeFullName, baseFont, rectCaption, caption2Color, textFormatFlags);
             }
+
+            //if (comPtrTreeNode != null)
+            //{
+            //    var pUnk = comPtrTreeNode.ComPtr.DangerousGetHandle();
+            //    string value = String.Format("{0}", pUnk);
+            //    rectCaption.X += rectCaption.Width;
+            //    rectCaption.Width = TextRenderer.MeasureText(value, baseFont).Width;
+            //    TextRenderer.DrawText(e.Graphics, value, baseFont, rectCaption, pointerColor, textFormatFlags);
+            //}
         }
 
         //private void HandleRightClick(TreeNode node, Point p)
@@ -863,7 +873,7 @@ namespace SolidEdge.Spy.Forms
         protected ComFunctionInfo _comFunctionInfo = null;
         private bool _getFunctionHasParameters = false;
         protected bool _isCollection = false;
-        public int _collectionCount = -1;
+        private int _collectionCount = -1;
 
         public ComPtrTreeNode(string caption, ComPtr comPtr)
             : base(caption)

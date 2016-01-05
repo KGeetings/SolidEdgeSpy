@@ -42,13 +42,37 @@ namespace SolidEdge.Spy
             _connectionPointController = new ConnectionPointController(this);
         }
 
-        private void Application_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
+            try
+            {
+                // Set window location
+                if (Settings.Default.MainFormRect != Rectangle.Empty)
+                {
+                    var rect = Settings.Default.MainFormRect;
+
+                    foreach (Screen screen in Screen.AllScreens)
+                    {
+                        if (screen.WorkingArea.IntersectsWith(rect))
+                        {
+                            this.Location = rect.Location;
+                            this.Size = rect.Size;
+                            break;
+                        }
+                    }
+                }
+
+                this.WindowState = Settings.Default.MainFormWindowState;
+            }
+            catch
+            {
+            }
+
             try
             {
                 // Register with OLE to handle concurrency issues on the current thread.
                 OleMessageFilter.Register();
-
+                
                 PreloadTypeLibraries();
 
                 ComTypeManager.Instance.ComTypeLibrarySelected += Instance_ComTypeLibrarySelected;
@@ -62,8 +86,33 @@ namespace SolidEdge.Spy
             SetupToolStripManager();
         }
 
-        private void Application_FormClosing(object sender, FormClosingEventArgs e)
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            try
+            {
+                var rect = new Rectangle(this.Location, this.Size);
+
+                switch (this.WindowState)
+                {
+                    case FormWindowState.Maximized:
+                        Settings.Default.MainFormWindowState = this.WindowState;
+                        break;
+                    case FormWindowState.Minimized:
+                        Settings.Default.MainFormWindowState = FormWindowState.Normal;
+                        break;
+                    case FormWindowState.Normal:
+                        Settings.Default.MainFormRect = rect;
+                        Settings.Default.MainFormWindowState = this.WindowState;
+                        break;
+                }
+
+                // Save settings
+                Settings.Default.Save();
+            }
+            catch
+            {
+            }
+
             try
             {
                 OleMessageFilter.Unregister();

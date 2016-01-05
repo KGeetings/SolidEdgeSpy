@@ -457,8 +457,8 @@
             this.MainMenuStrip = this.menuStrip;
             this.Name = "MainForm";
             this.Text = "Spy for Solid Edge";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Application_FormClosing);
-            this.Load += new System.EventHandler(this.Application_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.tabControl.ResumeLayout(false);
