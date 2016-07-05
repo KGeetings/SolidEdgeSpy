@@ -1,6 +1,6 @@
 Spy for Solid Edge
 ================
-
+![](https://raw.githubusercontent.com/SolidEdgeCommunity/SolidEdgeSpy/master/media/screenshot.png)
 Spy for Solid Edge is an open source .NET application written in C# that connects to a running instance of Solid Edge and exposes the underlying runtime COM API visually.
 
 Solid Edge has a very large object model making it difficult to visualize and learn. The application greatly simplifies the process of learning the object model for beginners while also being useful to experts.
