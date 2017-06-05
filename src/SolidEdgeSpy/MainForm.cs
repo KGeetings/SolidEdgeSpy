@@ -19,6 +19,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Squirrel;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace SolidEdgeSpy
 {
@@ -66,7 +67,9 @@ namespace SolidEdgeSpy
 
         private async void MainForm_Shown(object sender, EventArgs e)
         {
-            await UpdateApplication();
+#if !DEBUG
+            await UpdateApplication(false);
+#endif
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -192,7 +195,7 @@ namespace SolidEdgeSpy
 
         private async void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            await UpdateApplication();
+            await UpdateApplication(true);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -362,7 +365,7 @@ namespace SolidEdgeSpy
 
         public SolidEdgeFramework.Application Application { get { return _application; } }
 
-        #region SolidEdgeFramework.ISEApplicationEvents
+#region SolidEdgeFramework.ISEApplicationEvents
 
         public void AfterActiveDocumentChange(object theDocument)
         {
@@ -856,15 +859,30 @@ namespace SolidEdgeSpy
             _eventQueue.Enqueue(new Forms.EventMonitorItem(eventString, environmentName, environmentCaption, environmentCATID));
         }
 
-        #endregion
+#endregion
 
-        private async Task UpdateApplication()
+        private async Task UpdateApplication(bool showException)
         {
             bool shouldRestart = false;
 
+            var updateUrl = Resources.UpdateUrl;
+
             try
             {
-                using (var updateManager = new UpdateManager(Resources.UpdateUrl))
+                updateUrl = ConfigurationManager.AppSettings["UpdateUrl"];
+            }
+            catch
+            {
+            }
+
+            if (String.IsNullOrWhiteSpace(updateUrl))
+            {
+                updateUrl = Resources.UpdateUrl;
+            }
+
+            try
+            {
+                using (var updateManager = new UpdateManager(updateUrl))
                 {
                     var updateInfo = await updateManager.CheckForUpdate();
 
@@ -894,7 +912,10 @@ namespace SolidEdgeSpy
             }
             catch (System.Exception ex)
             {
-                MessageBox.Show(ex.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (showException)
+                {
+                    MessageBox.Show(ex.Message, "Updater", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
 
             Cursor.Current = Cursors.Default;
