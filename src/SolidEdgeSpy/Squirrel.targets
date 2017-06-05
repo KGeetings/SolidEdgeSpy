@@ -6,7 +6,7 @@
     </GetAssemblyIdentity>
     <PropertyGroup>
       <SemanticVersion>$([System.Version]::Parse(%(assemblyInfo.Version)).ToString(3))</SemanticVersion>
-      <NuGetCommand>nuget pack $(ProjectName).nuspec -Version $(SemanticVersion) -Properties Configuration=Release -OutputDirectory $(ProjectDir)</NuGetCommand>
+      <NuGetCommand>nuget pack $(ProjectDir)$(ProjectName).nuspec -Version $(SemanticVersion) -Properties Configuration=Release -OutputDirectory $(ProjectDir)</NuGetCommand>
       <SquirrelCommand>squirrel --releasify $(ProjectDir)$(ProjectName).$(SemanticVersion).nupkg --no-msi --setupIcon App.ico</SquirrelCommand>
     </PropertyGroup>
     <Message Text="Executing: $(NuGetCommand)" Importance="High" />
